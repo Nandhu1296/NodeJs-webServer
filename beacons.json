@@ -1,0 +1,44 @@
+[
+  {
+    "group_id": 1,
+    "group_name": "Wallace Hall",
+    "floor_num": 1,
+    "floor_file": "Wallace-1ST-FLR.png",
+    "beacon_file": "list.rtf"
+  },
+  {
+    "group_id": 1,
+    "group_name": "Wallace Hall",
+    "floor_num": 2,
+    "floor_file": "Wallace-2ND-FLR.png",
+    "beacon_file": "list.rtf"
+  },
+  {
+    "group_id": 1,
+    "group_name": "Wallace Hall",
+    "floor_num": 3,
+    "floor_file": "Wallace-3RD-FLR.png",
+    "beacon_file": "list.rtf"
+  },
+  {
+    "group_id": 2,
+    "group_name": "Jabara Hall",
+    "floor_num": 1,
+    "floor_file": "Jabara-1ST-FLR.png",
+    "beacon_file": "list.rtf"
+  },
+  {
+    "group_id": 222,
+    "group_name": "222",
+    "floor_num": 222,
+    "floor_file": "rer.hgg",
+    "beacon_file": "rer.ghh"
+  },
+  {
+    "group_id": 111111,
+    "group_name": "111111",
+    "floor_num": 111111,
+    "floor_file": "111111",
+    "beacon_file": "111111"
+  }
+]

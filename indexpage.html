@@ -1,0 +1,139 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Beacon Database Access</title>
+		<script src="./clear.js"></script>
+		<link href="styles.css" rel="stylesheet">
+        <title>cityguide DB modifier</title>
+	</head>
+	<body>
+
+
+		<div id=list>
+			<form method="POST" action="http://localhost:3301/list">
+				<div>
+					<label for="list"></label>
+					<input type="text" id="auth" name="auth" value="eW7jYaEz7mnx0rrM" hidden>
+					<button>GO TO LIST OF BEACONS & FILES</button>
+				</div>
+			</form>
+		</div>
+		<div id=title>
+			<h1>Floorplan File Insert</h1>
+			<h3>Please enter the Group ID, name for the group you want to enter, and the filenames of the files you want to insert</h3>
+		</div>
+		<div id=searchbox>
+			<form method="POST" action="http://localhost:3301/fileinsert">
+				<div>
+					<label for="gid">Group ID:*</label>
+					<input type="text" id="gid" name="gid" placeholder="Group ID" pattern="[0-9\-]*" required><br>
+					<label for="gname">Group Name:*</label>
+					<input type="text" id="gname" name="gname" maxlength="50" placeholder="Group Name" pattern='[a-zA-Z0-9~!@#$%^&*(){}[\]/\?=+\\|\",<.>;:\s-_]*' required><br>
+					<label for="fno">Floor Number:*</label>
+					<input type="text" id="fno" name="fno" maxlength="50" placeholder="Floor Number" pattern="[0-9\-]*" required><br>
+					<label for="flrfile">FLoor Plan (include file extension):*</label>
+					<input type="text" id="flrfile" name="flrfile" placeholder="Floor Plan Name" pattern='[a-zA-Z0-9~!@#$%^&*(){}[\]/\?=+\\|\",<.>;:-_]*' required><br>
+					<label for="bfile">Beacon List File (include file extension):*</label>
+					<input type="text" id="bfile" name="bfile" placeholder="Beacon List File" pattern='[a-zA-Z0-9~!@#$%^&*(){}[\]/\?=+\\|\",<.>;:-_]*' required>	
+					<input type="text" id="auth" name="auth" value="eW7jYaEz7mnx0rrM" hidden> <br><br>
+					<p>* Required</p>
+					<button>CREATE</button>
+				</div>
+			</form>
+		</div>
+		<h1>Beacon Data Insert</h1>
+
+		<h3>Please enter the ID for the beacon you want to add, along with the corresponding information</h3>
+		<div id=searchbox>
+			<form method="POST" action="http://localhost:3301/beaconinsert">
+				<div>
+					<label for="bid">Beacon ID:*</label>
+					<input type="text" id="bid" name="bid" placeholder="Beacon ID" pattern="[a-zA-Z0-9\-]*" required><br>
+					<label for="gid">Group ID:</label>
+					<input type="text" id="gid" name="gid" placeholder="Group ID" pattern="[0-9\-]*" required><br>
+					<label for="bid">Node:*</label>
+					<input type="text" id="node" name="node" placeholder="Node" pattern="[a-zA-Z0-9\-]*" required><br>
+					<label for="bid">Numsens:*</label>
+					<input type="text" id="sens" name="sens" placeholder="Numsens" pattern="[0-9\-]*" required><br>
+					<label for="bid">Threshold:*</label>
+					<input type="text" id="thresh" name="thresh" placeholder="Threshold" pattern="[0-9\-]*" required><br>
+					<label for="bid">Direction:*</label>
+					<input type="text" id="drn" name="drn" placeholder="Direction" pattern="[0-9\-]*" required><br>
+					<label for="bid">Locname:*</label>
+					<input type="text" id="lname" name="lname" maxlength="200" placeholder="Locname" pattern='[a-zA-Z0-9~!@#$%^&*(){}[\]/\?=+\\|\",<.>;:-_\s]*' required><br>
+					<label for="bid">Other:</label>
+					<input type="text" id="other" name="other" maxlength="200" placeholder="Other" pattern='[a-zA-Z0-9~!@#$%^&*(){}[\]/\?=+\\|\",<.>;:-_\s]*'><br>
+					<label for="bid">Level:*</label>
+					<input type="text" id="lvl" name="lvl" placeholder="Level" pattern="[0-9\-]*" required><br>
+					<label for="bid">Bnorth:*</label>
+					<input type="text" id="bn" name="bn" placeholder="Bnorth" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Ndist:*</label>
+					<input type="text" id="nd" name="nd" placeholder="Ndist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bsouth:*</label>
+					<input type="text" id="bs" name="bs" placeholder="Bsouth" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Sdist:*</label>
+					<input type="text" id="sd" name="sd" placeholder="Sdist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Beast:*</label>
+					<input type="text" id="be" name="be" placeholder="Beast" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Edist:*</label>
+					<input type="text" id="ed" name="ed" placeholder="Edist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bwest:*</label>
+					<input type="text" id="bw" name="bw" placeholder="Bwest" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Wdist:*</label>
+					<input type="text" id="wd" name="wd" placeholder="Wdist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bneast:*</label>
+					<input type="text" id="bne" name="bne" placeholder="Bneast" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Neastdist:*</label>
+					<input type="text" id="ned" name="ned" placeholder="Neastdist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bnwest:*</label>
+					<input type="text" id="bnw" name="bnw" placeholder="Bnwest" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Nwestdist:*</label>
+					<input type="text" id="nwd" name="nwd" placeholder="Nwestdist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bseast:*</label>
+					<input type="text" id="bse" name="bse" placeholder="Bseast" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Seastdist:*</label>
+					<input type="text" id="sed" name="sed" placeholder="Seastdist" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Bswest:*</label>
+					<input type="text" id="bsw" name="bsw" placeholder="Bswest" pattern="[0-9\-]*" value="-10" required><br>
+					<label for="bid">Swestdist:*</label>
+					<input type="text" id="swd" name="swd" placeholder="Swestdist" pattern="[0-9\-]*" value="-10" required>
+					<input type="text" id="auth" name="auth" value="eW7jYaEz7mnx0rrM" hidden> <br><br>
+					<p>* Required</p>
+					<button>CREATE</button>
+				</div>
+			</form>
+			</div>
+			<div>
+			<h1>Delete Beacon</h1>
+			<h3>Enter the ID of the beacon you want to delete.</h3>
+			<div id=searchbox>
+			<form method="POST" action="http://localhost:3301/delete">
+				<div>
+					<label for="bid">Beacon ID:</label>
+					<input type="text" id="bid" name="bid" placeholder="Beacon ID" pattern="[a-zA-Z0-9]*" required>
+					<input type="text" id="auth" name="auth" value="eW7jYaEz7mnx0rrM" hidden> <br>
+					<h2 style="color: red">Are you sure?</h2>
+					<button>DELETE</button>
+				</div>
+			</form>
+			</div>
+			</div>
+			<div>
+			<h1>Delete Groups</h1>
+			<h3>Enter the GroupID that you want to delete.</h3>
+			<div id=searchbox>
+			<form method="POST" action="http://localhost:3301/gdelete">
+				<div>
+					<label for="gid">Group ID:</label>
+					<input type="text" id="gid" name="gid" placeholder="Group ID" pattern="[0-9]*" required>
+					<input type="text" id="auth" name="auth" value="eW7jYaEz7mnx0rrM" hidden> <br>
+					<h2 style="color: red">Are you sure?</h2>
+					<button>DELETE</button>
+				</div>
+			</form>
+			</div>
+			</div>
+		</div>
+		
+	</body> 
+</html> -->

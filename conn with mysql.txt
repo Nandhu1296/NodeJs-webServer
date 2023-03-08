@@ -1,0 +1,732 @@
+const express = require('express')
+const app = express()
+const mysql = require('mysql')
+
+const bodyParser = require('body-parser');
+// const path = require('path');
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+const db_connected = false;
+const port = process.env.PORT || 3301
+
+function buildConnection() {
+	let connection = null;
+	try {
+		connection = mysql.createConnection({
+			host: 'us-cdbr-east-06.cleardb.net',
+			user: 'bc9c32f050a15c',
+			password: '0ee5f540',
+			database: 'heroku_831227db1a5b37d',
+		});
+		connection.connect();
+		db_connected = true;
+	} catch(err) {
+		console.log(err);
+		db_connected = false;
+	} finally {
+		return connection;
+	}
+}
+
+function buildRoutes(app) {
+	app.get('/', function (req, res) {
+		res.render('pages/index');
+	})
+	
+	app.get('/list', function (req, res) {
+		try {
+			var htmlToSend = ""
+			if(!db_connected || !connection) {
+				req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+				return
+			}
+			// Query for files
+	
+			// Query for files
+			connection.query('SELECT * FROM beacons', (err, records) => {
+				if (err) throw err;
+				console.log("im here nanda1");
+	
+				// connection.query(queryA, function (err, records){
+				if (err) console.log(err);
+				console.log("im here nanda2");
+	
+				// To the existing html table, add information for files
+				htmlToSend = `
+					<!DOCTYPE html>
+					<html lang="en">
+					<head>
+					<title>List of Beacons & Files</title>
+					</head>
+					<body>
+					<div id="searchbox">
+					<h1>Beacon Groups & Files</h1>
+					<table>
+					<tr>
+					<th>Group ID</th>
+					<th>Group Name</th>
+					<th>File Name</th>
+					</tr>`;
+	
+				// request.query(queryA, function (err, records){
+				// 	if (err) console.log(err);
+	
+				// To the existing html table, add information for files
+				console.log(records.length);
+				// });
+				for (var i = 0; i < records.length; i++) {
+					htmlToSend = htmlToSend + `
+						<tr>
+						<td>${records[i].group_id}</td>
+						<td>${records[i].group_name}</td>
+						<td>${records[i].group_file}</td>
+						</tr>`;
+				}
+	
+				if (!err) {
+					console.log(records)
+					// res.render('pages/index',htmlToSend)
+					// res.send(htmlToSend)
+	
+					// res.send();
+				}
+	
+			});
+	
+			connection.query('SELECT * FROM beacondata', (err, records) => {
+				if (err) throw err;
+				console.log("im here nanda3");
+	
+				// connection.query(queryA, function (err, records){
+				if (err) console.log(err);
+				console.log("im here nanda4");
+	
+				// setTimeout(function(){
+	
+				// Second table
+				htmlToSend = htmlToSend + `</table></div>
+						<div id="searchbox">
+						<h1>Beacons</h1>
+						<table>
+						<tr>
+						<th>Beacon ID</th>
+						<th>Group ID</th>
+						<th>Node</th>
+						<th>Numsens</th>
+						<th>Threshold</th>
+						<th>Direction</th>
+						<th>Location Name</th>
+						<th>Other</th>
+						<th>Level</th>
+						<th>BNorth</th>
+						<th>NDist</th>
+						<th>BSouth</th>
+						<th>SDist</th>
+						<th>BEast</th>
+						<th>EDist</th>
+						<th>BWest</th>
+						<th>WDist</th>
+						<th>BNEast</th>
+						<th>NEastDist</th>
+						<th>BNWest</th>
+						<th>NWestDist</th>
+						<th>BSEast</th>
+						<th>SEastDist</th>
+						<th>BSWest</th>
+						<th>SWestDist</th>
+						</tr>`;
+	
+				// Query for beacons
+				// request.query(queryB, function (err, records){
+				// 	if (err) console.log(err);
+	
+				for (var i = 0; i < records.length; i++) {
+					htmlToSend = htmlToSend + `
+								<tr>
+								<td>${records[i].beacon_id}</td>
+								<td>${records[i].group_id}</td>
+								<td>${records[i].node}</td>
+								<td>${records[i].numsens}</td>
+								<td>${records[i].threshold}</td>
+								<td>${records[i].direction}</td>
+								<td>${records[i].locname}</td>
+								<td>${records[i].other}</td>
+								<td>${records[i]._level}</td>
+								<td>${records[i].bnorth}</td>
+								<td>${records[i].ndist}</td>
+								<td>${records[i].bsouth}</td>
+								<td>${records[i].sdist}</td>
+								<td>${records[i].beast}</td>
+								<td>${records[i].edist}</td>
+								<td>${records[i].bwest}</td>
+								<td>${records[i].wdist}</td>
+								<td>${records[i].bneast}</td>
+								<td>${records[i].neastdist}</td>
+								<td>${records[i].bnwest}</td>
+								<td>${records[i].nwestdist}</td>
+								<td>${records[i].bseast}</td>
+								<td>${records[i].seastdist}</td>
+								<td>${records[i].bswest}</td>
+								<td>${records[i].swestdist}</td>
+								</tr>
+								`;
+				}
+				setTimeout(function () {
+					console.log("Beacons Fetched");
+					// res.send(htmlToSend)
+				}, 500);
+	
+				setTimeout(function () {
+	
+					// End of html
+					htmlToSend = htmlToSend + `
+								</table>
+								</div>
+								<a href="javascript:history.back()">Go Back</a>
+								</body>
+								</html>
+								`;
+					res.send(htmlToSend);
+				}, 750);
+				// });
+				// }, 250);
+	
+			});
+	
+	
+	
+		}
+		catch (err) {
+			console.log(err)
+			res.send(`<p>There was an issue displaying the data: ${err}</p>
+			<a href="javascript:history.back()">Go Back</a>`);
+		}
+	
+	
+	})
+	
+	
+	app.post('/fileinsert', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		var groupid = req.body.gid;
+		var groupname = req.body.gname;
+		var flrno = req.body.fno;
+		var flrfile = req.body.flrfile;
+		var bfile = req.body.bfile;
+		var auth = req.body.auth;
+	
+		// Database Information
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err){
+	
+			// Create request handler and query to insert file
+			// IF THE ORDER OF THE COLUMNS IN THE DATABASE EVER CHANGE, THE ORDER HERE WILL NEED TO REFLECT THAT
+			// var request = new mssql.Request();
+			console.log("fileinserted1");
+			var ins_query = `INSERT INTO beacons VALUES (${groupid}, '${groupname}',${flrno},'${flrfile}','${bfile}')`;
+			console.log("fileinserted1");
+	
+	
+			// Query to insert file
+			connection.query(ins_query,
+				function (err, records) {
+					console.log("fileinserted3");
+	
+					try {
+						if (err) {
+							console.log(err);
+							throw err;
+						}
+						console.log("fileinserted4");
+	
+	
+						res.send(`<p>Successfully inserted group id ${groupid} into the database</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+					}
+					catch (err) {
+						res.send(`<p>There was an issue adding the file to the database: ${err}</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+					}
+				});
+	
+			// setTimeout(function(){
+			// mssql.close()
+			// }, 3000);
+	
+			// });
+		}
+		catch (err) {
+			res.send(`<p>There was an issue adding to the database: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	// Handle POST requests for inserting beacon data into database
+	app.post('/beaconinsert', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		//POST variables
+		//IF THE NAME AND ID OF THE WEB FORM EVER GET CHANGED, THE NAMES OF THESE REQ.BODY ATTRIBUTES WILL NEED TO MATCH THEM 
+		var beaconid = req.body.bid;
+		var beaconname = req.body.bname;
+		var groupid = req.body.gid;
+		var node = req.body.node;
+		var sens = req.body.sens;
+		var thresh = req.body.thresh;
+		var drn = req.body.drn;
+		var lname = req.body.lname;
+		var other = req.body.other;
+		var lvl = req.body.lvl;
+		var bn = req.body.bn;
+		var nd = req.body.nd;
+		var bs = req.body.bs;
+		var sd = req.body.sd;
+		var be = req.body.be;
+		var ed = req.body.ed;
+		var bw = req.body.bw;
+		var wd = req.body.wd;
+		var bne = req.body.bne;
+		var ned = req.body.ned;
+		var bnw = req.body.bnw;
+		var nwd = req.body.nwd;
+		var bse = req.body.bse;
+		var sed = req.body.sed;
+		var bsw = req.body.bsw;
+		var swd = req.body.swd;
+		// var auth = req.body.auth;
+	
+	
+		// Database Information
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err){
+	
+			// Create request handler and query to insert beacon data
+			// IF THE ORDER OF COLUMNS IN THE DATABASE CHANGE, THE ORDER HERE WILL NEED TO REFLECT THAT
+			// var request = new mssql.Request();
+			var ins_query = `INSERT INTO beacondata VALUES ('${beaconid}', ${groupid}, ${node}, ${sens}, ${thresh}, ${drn}, '${lname}', '${other}', ${lvl}, ${bn}, ${nd}, ${bs}, ${sd}, ${be}, ${ed}, ${bw}, ${wd}, ${bne}, ${ned}, ${bnw}, ${nwd}, ${bse}, ${sed}, ${bsw}, ${swd})`;
+	
+			// Query to insert beacon data
+			connection.query(ins_query, function (err, records) {
+				try {
+					if (err) {
+						console.log(err);
+						throw err;
+					}
+	
+					res.send(`<p>Successfully inserted beacon ${beaconid} into the database</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+				}
+				catch (err) {
+					res.send(`<p>There was an issue adding to the database: ${err}</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+				}
+			});
+			// setTimeout(function(){
+			// mssql.close()
+			// }, 500);
+	
+			// });
+		}
+		catch (err) {
+			console.log(`There was an issue adding to the database: ${err}`);
+			res.send(`<p>There was an issue adding to the database: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	app.post('/delete', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		var bid = req.body.bid;
+		// var auth = req.body.auth;
+	
+		// Database Information
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err){
+	
+			// Create request handler and query for deleting beacons
+			// var request = new mssql.Request();
+			var queryd = `DELETE FROM beacondata WHERE beacon_id = '${bid}'`;
+	
+			// To delete groups of beacons from the file table:
+			// var queryf = `DELETE FROM dbo.beacons WHERE group_id = ${bid}`;
+			// request.query(queryf, function (err, records){
+			// 	if (err) throw err;
+			// });
+	
+			// Query to delete beacons
+			connection.query(queryd, function (err, records) {
+				if (err) throw err;
+	
+				res.send(`<p>Successfully deleted beacon id '${bid}' from the database.</p>
+						<a href="javascript:history.back()">Go Back</a>`);
+			});
+			// });
+			// setTimeout(function(){
+			// mssql.close();
+			// }, 500);
+	
+		}
+		catch (err) {
+			console.log(`There was an issue deleting from the database: ${err}`);
+			res.send(`<p>There was an issue deleting from the database: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	
+	app.post('/gdelete', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		var gid = req.body.gid;
+		// var auth = req.body.auth;
+	
+		// Database Information
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err){
+	
+			// Create request handler and query for deleting beacons
+			// var request = new mssql.Request();
+			var queryd = `DELETE FROM beacons WHERE group_id = ${gid}`;
+	
+			// To delete groups of beacons from the file table:
+			// var queryf = `DELETE FROM dbo.beacons WHERE group_id = ${bid}`;
+			// request.query(queryf, function (err, records){
+			// 	if (err) throw err;
+			// });
+	
+			// Query to delete beacons
+			connection.query(queryd, function (err, records) {
+				if (err) throw err;
+	
+				res.send(`<p>Successfully deleted group id ${gid} from the database.</p>
+						<a href="javascript:history.back()">Go Back</a>`);
+			});
+			// });
+			// setTimeout(function(){
+			// mssql.close();
+			// }, 500);
+	
+		}
+		catch (err) {
+			console.log(`There was an issue deleting from the database: ${err}`);
+			res.send(`<p>There was an issue deleting from the database: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	///////////upwards pc done, downwards is for mobile
+	app.post('/beacon', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		// var auth = req.body.auth;
+		var gid = req.body.gid;
+		var fno = req.body.fno;
+	
+		// Database Information	
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err) {
+	
+			// Create request handler and query for files
+			// var request = new mssql.Request();
+			var query = `SELECT beacon_file FROM beacons WHERE group_id = ${gid} AND floor_num = ${fno}`;
+	
+			// Query for file to download
+			connection.query(query,
+				function (err, records) {
+					try {
+						if (err) {
+							console.log(err);
+							throw err;
+						}
+	
+						try {
+	
+							// If there are files associated with the given group ID
+							if (records.rowsAffected != '0') {
+								// Get filename & send for download
+								// NOTE: We can either send a download or send text, not both using the current setup
+								var fileName = 'beaconfiles/' + records[0].beacon_file;
+								res.download(fileName, function (derr) {
+									if (derr) {
+										throw (derr);
+									}
+	
+									else {
+										console.log(`Successfully sent ${fileName} for download.`)
+									}
+								});
+							}
+							else {
+								res.send(`<p>There are no files with that group ID.</p>
+									<a href="javascript:history.back()">Go Back</a>`);
+							}
+						}
+						catch (err) {
+							console.log(`There was an error:  ${err} `);
+							res.send(`<p>There was an error. Make sure the group ID is correct: ${err}</p>
+								<a href="javascript:history.back()">Go Back</a>` );
+						}
+					}
+					catch (err) {
+						res.send(`<p>There was an error getting the file: ${err}</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+					}
+				});
+			// setTimeout(function(){
+			// mssql.close();
+			// }, 1500);
+	
+			// });
+		}
+		catch (err) {
+			console.log(`There was an issue connecting to the database, check the authorization: ${err} `);
+			res.send(`<p>There was an issue connecting to the database, check the authorization: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	// Handle POST requests for downloading files for beacons
+	app.post('/floor', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		// var auth = req.body.auth;
+		var gid = req.body.gid;
+		var fno = req.body.fno;
+	
+		// Database Information	
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		//     "encrypt": true,
+		//     "enableArithAbort": true
+		//     },
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err) {
+	
+			// Create request handler and query for files
+			// var request = new mssql.Request();
+			var query = `SELECT floor_file FROM beacons WHERE group_id = ${gid} AND floor_num = ${fno}`;
+	
+			// Query for file to download
+			connection.query(query,
+				function (err, records) {
+					try {
+						if (err) {
+							console.log(err);
+							throw err;
+						}
+	
+						try {
+	
+							// If there are files associated with the given group ID
+							if (records.rowsAffected != '0') {
+								// Get filename & send for download
+								// NOTE: We can either send a download or send text, not both using the current setup
+								var fileName = 'beaconfiles/' + records[0].floor_file;
+								res.download(fileName, function (derr) {
+									if (derr) {
+										throw (derr);
+									}
+	
+									else {
+										console.log(`Successfully sent ${fileName} for download.`)
+									}
+								});
+							}
+							else {
+								res.send(`<p>There are no files with that group ID.</p>
+									<a href="javascript:history.back()">Go Back</a>`);
+							}
+						}
+						catch (err) {
+							console.log(`There was an error:  ${err} `);
+							res.send(`<p>There was an error. Make sure the group ID is correct: ${err}</p>
+								<a href="javascript:history.back()">Go Back</a>` );
+						}
+					}
+					catch (err) {
+						res.send(`<p>There was an error getting the file: ${err}</p>
+							<a href="javascript:history.back()">Go Back</a>`);
+					}
+				});
+			// setTimeout(function(){
+			// mssql.close();
+			// }, 1000);
+	
+			// });
+		}
+		catch (err) {
+			console.log(`There was an issue connecting to the database, check the authorization: ${err} `);
+			res.send(`<p>There was an issue connecting to the database, check the authorization: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	
+	app.post('/data', function (req, res) {
+		if(!db_connected || !connection) {
+			req.json({ 'error': { 'type': 'DB', message: 'disconnected' }});
+			return
+		}
+		// POST variables
+		// IF THE NAME OF THE POST VARIABLES GET CHANGED ON THE WEB FORM, THEY (REQ.BODY) WILL NEED TO MATCH HERE
+		// var auth = req.body.auth;
+		var beaconid = req.body.beaconid;
+	
+		// Database Information
+		// const config = {
+		// 	user: 'b2336d9df799be',
+		// 	password: 'c553f97c',
+		// 	server: 'us-cdbr-east-06.cleardb.net',
+		// 	database: 'heroku_5497df1e2a67fd6',
+		// 	"options": {
+		// 	"encrypt": true,
+		// 	"enableArithAbort": true
+		// 	},
+		// 	port: 3306
+		// };
+	
+		try {
+			// Connect to database
+			// mssql.connect(config, function (err) {
+	
+			// Create request handler and query for beacon data
+			// var request = new mssql.Request();
+			var query = `SELECT * FROM beacondata WHERE beacon_id = '${beaconid}'`;
+	
+			// Query for beacon data
+			connection.query(query,
+				function (err, records) {
+					if (err) console.log(err);
+	
+					try {
+						// Send the data in pure JSON form
+						if (records.length == 0) {
+							throw 'Beacod ID not found in database'
+						}
+						else {
+							res.send(records);
+							console.log(`Successfully sent ${records} for '${beaconid}'`);
+						}
+					}
+					catch (err) {
+						console.log(`There was an error:  ${err} `);
+						// res.send(`<p>There was an error. Make sure the beacon id is correct: ${err}</p>
+						// 	<a href="javascript:history.back()">Go Back</a>` );
+					}
+				});
+	
+			// });
+	
+			// setTimeout(function(){
+			// 	mssql.close();
+			// }, 3000);
+		}
+		catch (err) {
+			console.log(`There was an issue connecting to the database, check the authorization: ${err} `);
+			res.send(`<p>There was an issue connecting to the database, check the authorization: ${err}</p>
+				<a href="javascript:history.back()">Go Back</a>`);
+		}
+	});
+	return app;
+}
+
+app.set("view engine", "ejs")
+const connection = buildConnection();
+app = buildRoutes(app);
+app.listen(port);
+console.log(`server is listening in ${port} or whatever heroku given`);

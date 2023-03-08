@@ -1,0 +1,20 @@
+{
+  "name": "cloud-server1",
+  "version": "1.0.0",
+  "description": "***We decided to move to an M1 chip Apple Mac mini***",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.8",
+    "express": "^4.17.1",
+    "mssql": "^9.1.1",
+    "mysql": "^2.18.1",
+    "pug": "^3.0.2"
+  },
+  "scripts": {
+    "start": "npm install -g npm && npm cache clean --force && rm -rf node_modules/ && npm ci && node app.js"
+  }
+}

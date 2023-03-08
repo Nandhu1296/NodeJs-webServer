@@ -1,0 +1,53 @@
+h1 {
+	text-align: center;
+	color: green;
+}
+
+h2 {
+	text-align: center;
+	color: green;
+}
+
+h3 {
+	text-align: center;
+}
+
+button {
+	background-color: green;
+	color: white;
+}
+
+div {
+    text-align: center;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#clearButton {
+	background-color: green;
+	color: white;
+}
+
+#rtitle {
+    color: green;
+    font-size: 16pt;
+}
+
+#searchbox {
+	background-color: lightgray;
+	border: 2px solid gray;
+	padding: 10px;
+    margin: auto;
+    width: 50%;
+}
+
+#resultbox {
+	background-color: lightgray;
+	border: 2px solid gray;
+	padding: 10px;
+    margin: auto;
+    width: 50%;
+}
